@@ -70,9 +70,11 @@ function parse_args
 
   # validate required args
   if [[ -z "${app}" ]]; then
-      echo "App missing"
-      usage
-      exit;
+    echo "   ";
+    echo "ERROR: APP missing"
+    echo "   ";
+    usage
+    exit;
   fi
 }
 
@@ -104,7 +106,9 @@ function gco
       git_url="git@""$domain"":""$project_url"".git"
       repoUrl="$git_url"
     else
-      echo "Unknown git url type (ssh/https)"
+      echo "   ";
+      echo "ERROR: Unknown git url type (ssh/https)"
+      echo "   ";
       exit 0
     fi
   fi
@@ -125,8 +129,7 @@ function gco
   cd "$repoName" || exit 0
 
   # open in app
-  ${app} . &
-
+  ${app} . >> /dev/null &
   exit 1
 }
 
