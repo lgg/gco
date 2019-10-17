@@ -74,7 +74,7 @@ function parse_args
     echo "ERROR: APP missing"
     echo "   ";
     usage
-    exit;
+    exit 0
   fi
 }
 
