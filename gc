@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Base script for argument parsing: https://github.com/mattbryson/bash-arg-parse
+# Script for git clone project and converts any git_url to ssh url (git@)
+
+# abort on error
+set -e
+
+function usage
+{
+  printf "Script for git clone project and converts any git_url to ssh url (git@)\n"
+  echo "Usage: gc URL [FOLDER]"
+  echo "   ";
+  echo "  -h  | --help                         : Show help";
+  echo "   ";
+  echo "Example: gc https://github.com/lgg/gco gco-script";
+  echo "   ";
+  echo "Command above: convert URL to git@github.com:lgg/gco.git";
+  echo "and git clone project to gco-script folder";
+  echo "   ";
+  exit 1
+}
+
+function parse_args
+{
+  # positional args
+  args=()
+
+  # named args
+  while [[ "$1" != "" ]]; do
+    case "$1" in
+      -h  | --help )                     usage;                      exit;; # quit and show usage
+      * )                                args+=("$1")                # if no match, add it to the positional args
+    esac
+    shift # move to next kv pair
+  done
+
+  # restore positional args
+  set -- "${args[@]}"
+
+  # set positionals to vars
+  repoUrl="${args[0]}"
+  repoName="${args[1]}"
+}
+
+function run
+{
+  # parse flags and arguments
+  parse_args "$@"
+
+  gc
+}
+
+function gc
+{
+  git_url=""
+  url="$repoUrl"
+
+  # check if we have git@ url and rewrite it to git@
+  if [[ "${url%@*}" = "git" ]]; then
+    git_url="$url"
+  elif [[ "${url%://*}" = "https" ]]; then
+    url="${url/.git}"
+    domain="${url#*https:\/\/}"
+    domain="${domain/\/*}"
+    project_url="${url#*https:\/\/$domain\/}"
+    git_url="git@""$domain"":""$project_url"".git"
+    repoUrl="$git_url"
+  else
+    echo "   ";
+    echo "ERROR: Unknown git url type (ssh/https)"
+    echo "   ";
+    exit 0
+  fi
+  printf "Project url: %s\n" "$repoUrl"
+
+  # parse project name
+  if [[ "$repoName" = "" ]]; then
+    printf "No project name specified. Parsing it from url...\n"
+    repoName="${repoUrl##*/}"
+    repoName="${repoName/.git/}"
+  fi
+  printf "Project name: %s\n" "$repoName"
+
+  # git clone project
+  git clone "$repoUrl" "$repoName"
+
+  exit 1
+}
+
+run "$@";
