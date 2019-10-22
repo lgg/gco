@@ -69,6 +69,7 @@ function gc
     echo "   ";
     echo "ERROR: Unknown git url type (ssh/https)"
     echo "   ";
+    usage;
     exit 0
   fi
   printf "Project url: %s\n" "$repoUrl"

@@ -109,6 +109,7 @@ function gco
       echo "   ";
       echo "ERROR: Unknown git url type (ssh/https)"
       echo "   ";
+      usage;
       exit 0
     fi
   fi
