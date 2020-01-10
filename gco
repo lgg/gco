@@ -91,6 +91,9 @@ function gco
   repoUrl="$positional_1"
   repoName="$positional_2"
 
+  # remove trailing slash if it exists
+  repoUrl=${repoUrl%/}
+
   # check if we need to convert git url to ssh
   if [[ "$convert_url" = 1 ]]; then
     git_url=""

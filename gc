@@ -40,6 +40,9 @@ function parse_args
   # set positionals to vars
   repoUrl="${args[0]}"
   repoName="${args[1]}"
+
+  # remove trailing slash if it exists
+  repoUrl=${repoUrl%/}
 }
 
 function run
